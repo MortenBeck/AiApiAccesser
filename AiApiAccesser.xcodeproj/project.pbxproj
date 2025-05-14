@@ -35,16 +35,6 @@
 			path = AiApiAccesser;
 			sourceTree = "<group>";
 		};
-		5AAF24FA2DD4FB9B00E24095 /* AiApiAccesserTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AiApiAccesserTests;
-			sourceTree = "<group>";
-		};
-		5AAF25042DD4FB9C00E24095 /* AiApiAccesserUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = AiApiAccesserUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,8 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				5AAF24EB2DD4FB9800E24095 /* AiApiAccesser */,
-				5AAF24FA2DD4FB9B00E24095 /* AiApiAccesserTests */,
-				5AAF25042DD4FB9C00E24095 /* AiApiAccesserUITests */,
 				5AAF24EA2DD4FB9800E24095 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -130,9 +118,6 @@
 			dependencies = (
 				5AAF24F92DD4FB9B00E24095 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				5AAF24FA2DD4FB9B00E24095 /* AiApiAccesserTests */,
-			);
 			name = AiApiAccesserTests;
 			packageProductDependencies = (
 			);
@@ -153,9 +138,6 @@
 			dependencies = (
 				5AAF25032DD4FB9C00E24095 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				5AAF25042DD4FB9C00E24095 /* AiApiAccesserUITests */,
-			);
 			name = AiApiAccesserUITests;
 			packageProductDependencies = (
 			);
@@ -175,6 +157,7 @@
 				TargetAttributes = {
 					5AAF24E82DD4FB9800E24095 = {
 						CreatedOnToolsVersion = 16.3;
+						LastSwiftMigration = 1630;
 					};
 					5AAF24F62DD4FB9B00E24095 = {
 						CreatedOnToolsVersion = 16.3;
@@ -394,6 +377,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = AiApiAccesser/AiApiAccesser.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -412,6 +396,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -421,6 +406,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = AiApiAccesser/AiApiAccesser.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
