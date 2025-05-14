@@ -1,0 +1,556 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		5AAF24F82DD4FB9B00E24095 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5AAF24E12DD4FB9800E24095 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AAF24E82DD4FB9800E24095;
+			remoteInfo = AiApiAccesser;
+		};
+		5AAF25022DD4FB9C00E24095 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5AAF24E12DD4FB9800E24095 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AAF24E82DD4FB9800E24095;
+			remoteInfo = AiApiAccesser;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		5AAF24E92DD4FB9800E24095 /* AiApiAccesser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AiApiAccesser.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AAF24F72DD4FB9B00E24095 /* AiApiAccesserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AiApiAccesserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AAF25012DD4FB9C00E24095 /* AiApiAccesserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AiApiAccesserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		5AAF24EB2DD4FB9800E24095 /* AiApiAccesser */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AiApiAccesser;
+			sourceTree = "<group>";
+		};
+		5AAF24FA2DD4FB9B00E24095 /* AiApiAccesserTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AiApiAccesserTests;
+			sourceTree = "<group>";
+		};
+		5AAF25042DD4FB9C00E24095 /* AiApiAccesserUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AiApiAccesserUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5AAF24E62DD4FB9800E24095 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AAF24F42DD4FB9B00E24095 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AAF24FE2DD4FB9C00E24095 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5AAF24E02DD4FB9800E24095 = {
+			isa = PBXGroup;
+			children = (
+				5AAF24EB2DD4FB9800E24095 /* AiApiAccesser */,
+				5AAF24FA2DD4FB9B00E24095 /* AiApiAccesserTests */,
+				5AAF25042DD4FB9C00E24095 /* AiApiAccesserUITests */,
+				5AAF24EA2DD4FB9800E24095 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5AAF24EA2DD4FB9800E24095 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5AAF24E92DD4FB9800E24095 /* AiApiAccesser.app */,
+				5AAF24F72DD4FB9B00E24095 /* AiApiAccesserTests.xctest */,
+				5AAF25012DD4FB9C00E24095 /* AiApiAccesserUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5AAF24E82DD4FB9800E24095 /* AiApiAccesser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AAF250B2DD4FB9C00E24095 /* Build configuration list for PBXNativeTarget "AiApiAccesser" */;
+			buildPhases = (
+				5AAF24E52DD4FB9800E24095 /* Sources */,
+				5AAF24E62DD4FB9800E24095 /* Frameworks */,
+				5AAF24E72DD4FB9800E24095 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5AAF24EB2DD4FB9800E24095 /* AiApiAccesser */,
+			);
+			name = AiApiAccesser;
+			packageProductDependencies = (
+			);
+			productName = AiApiAccesser;
+			productReference = 5AAF24E92DD4FB9800E24095 /* AiApiAccesser.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5AAF24F62DD4FB9B00E24095 /* AiApiAccesserTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AAF250E2DD4FB9C00E24095 /* Build configuration list for PBXNativeTarget "AiApiAccesserTests" */;
+			buildPhases = (
+				5AAF24F32DD4FB9B00E24095 /* Sources */,
+				5AAF24F42DD4FB9B00E24095 /* Frameworks */,
+				5AAF24F52DD4FB9B00E24095 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5AAF24F92DD4FB9B00E24095 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5AAF24FA2DD4FB9B00E24095 /* AiApiAccesserTests */,
+			);
+			name = AiApiAccesserTests;
+			packageProductDependencies = (
+			);
+			productName = AiApiAccesserTests;
+			productReference = 5AAF24F72DD4FB9B00E24095 /* AiApiAccesserTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5AAF25002DD4FB9C00E24095 /* AiApiAccesserUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5AAF25112DD4FB9C00E24095 /* Build configuration list for PBXNativeTarget "AiApiAccesserUITests" */;
+			buildPhases = (
+				5AAF24FD2DD4FB9C00E24095 /* Sources */,
+				5AAF24FE2DD4FB9C00E24095 /* Frameworks */,
+				5AAF24FF2DD4FB9C00E24095 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5AAF25032DD4FB9C00E24095 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5AAF25042DD4FB9C00E24095 /* AiApiAccesserUITests */,
+			);
+			name = AiApiAccesserUITests;
+			packageProductDependencies = (
+			);
+			productName = AiApiAccesserUITests;
+			productReference = 5AAF25012DD4FB9C00E24095 /* AiApiAccesserUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5AAF24E12DD4FB9800E24095 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					5AAF24E82DD4FB9800E24095 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					5AAF24F62DD4FB9B00E24095 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 5AAF24E82DD4FB9800E24095;
+					};
+					5AAF25002DD4FB9C00E24095 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 5AAF24E82DD4FB9800E24095;
+					};
+				};
+			};
+			buildConfigurationList = 5AAF24E42DD4FB9800E24095 /* Build configuration list for PBXProject "AiApiAccesser" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5AAF24E02DD4FB9800E24095;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 5AAF24EA2DD4FB9800E24095 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5AAF24E82DD4FB9800E24095 /* AiApiAccesser */,
+				5AAF24F62DD4FB9B00E24095 /* AiApiAccesserTests */,
+				5AAF25002DD4FB9C00E24095 /* AiApiAccesserUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5AAF24E72DD4FB9800E24095 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AAF24F52DD4FB9B00E24095 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AAF24FF2DD4FB9C00E24095 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5AAF24E52DD4FB9800E24095 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AAF24F32DD4FB9B00E24095 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AAF24FD2DD4FB9C00E24095 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5AAF24F92DD4FB9B00E24095 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5AAF24E82DD4FB9800E24095 /* AiApiAccesser */;
+			targetProxy = 5AAF24F82DD4FB9B00E24095 /* PBXContainerItemProxy */;
+		};
+		5AAF25032DD4FB9C00E24095 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5AAF24E82DD4FB9800E24095 /* AiApiAccesser */;
+			targetProxy = 5AAF25022DD4FB9C00E24095 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5AAF25092DD4FB9C00E24095 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		5AAF250A2DD4FB9C00E24095 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		5AAF250C2DD4FB9C00E24095 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AiApiAccesser/AiApiAccesser.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MKB.AiApiAccesser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		5AAF250D2DD4FB9C00E24095 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AiApiAccesser/AiApiAccesser.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MKB.AiApiAccesser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		5AAF250F2DD4FB9C00E24095 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MKB.AiApiAccesserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AiApiAccesser.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AiApiAccesser";
+			};
+			name = Debug;
+		};
+		5AAF25102DD4FB9C00E24095 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MKB.AiApiAccesserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AiApiAccesser.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AiApiAccesser";
+			};
+			name = Release;
+		};
+		5AAF25122DD4FB9C00E24095 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MKB.AiApiAccesserUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AiApiAccesser;
+			};
+			name = Debug;
+		};
+		5AAF25132DD4FB9C00E24095 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V62T35PW9L;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = MKB.AiApiAccesserUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AiApiAccesser;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5AAF24E42DD4FB9800E24095 /* Build configuration list for PBXProject "AiApiAccesser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AAF25092DD4FB9C00E24095 /* Debug */,
+				5AAF250A2DD4FB9C00E24095 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5AAF250B2DD4FB9C00E24095 /* Build configuration list for PBXNativeTarget "AiApiAccesser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AAF250C2DD4FB9C00E24095 /* Debug */,
+				5AAF250D2DD4FB9C00E24095 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5AAF250E2DD4FB9C00E24095 /* Build configuration list for PBXNativeTarget "AiApiAccesserTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AAF250F2DD4FB9C00E24095 /* Debug */,
+				5AAF25102DD4FB9C00E24095 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5AAF25112DD4FB9C00E24095 /* Build configuration list for PBXNativeTarget "AiApiAccesserUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AAF25122DD4FB9C00E24095 /* Debug */,
+				5AAF25132DD4FB9C00E24095 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5AAF24E12DD4FB9800E24095 /* Project object */;
+}
