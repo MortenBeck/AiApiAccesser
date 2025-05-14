@@ -6,8 +6,16 @@ struct MainView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            // Debug info to show state
+            Text("Active ID: \(activeConversationId?.uuidString ?? "nil") | Count: \(appState.conversations.count)")
+                .font(.caption)
+                .padding(4)
+                .background(Color.black)
+                .foregroundColor(.white)
+            
             // Tab bar
             TabBar(activeConversationId: $activeConversationId)
+                .environmentObject(appState)
             
             // Main content area
             if let conversationId = activeConversationId,
@@ -26,6 +34,11 @@ struct MainView: View {
             APIManagementView()
                 .darkModeOnly()
         }
+        .sheet(isPresented: $appState.showUsageMonitor) {
+            UsageMonitorView()
+                .darkModeOnly()
+                .environmentObject(appState)
+        }
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 HStack(spacing: 16) {
@@ -34,6 +47,13 @@ struct MainView: View {
                     }) {
                         Image(systemName: "key.fill")
                             .help("API Management")
+                    }
+                    
+                    Button(action: {
+                        appState.showUsageMonitor = true
+                    }) {
+                        Image(systemName: "chart.bar.fill")
+                            .help("Usage Monitor")
                     }
                     
                     Button(action: {
@@ -46,13 +66,13 @@ struct MainView: View {
             }
         }
         .onAppear {
-            activeConversationId = appState.activeConversationId
-        }
-        .onChange(of: activeConversationId) { oldValue, newValue in
-            appState.activeConversationId = newValue
-        }
-        .onChange(of: appState.activeConversationId) { oldValue, newValue in
-            activeConversationId = newValue
+            print("MainView appeared")
+            
+            // Initialize activeConversationId with the first conversation if available
+            if activeConversationId == nil && !appState.conversations.isEmpty {
+                activeConversationId = appState.conversations[0].id
+                print("Setting initial active ID to: \(String(describing: activeConversationId))")
+            }
         }
     }
     
@@ -67,7 +87,11 @@ struct MainView: View {
             HStack(spacing: 20) {
                 ForEach(LLMType.allCases) { model in
                     Button(action: {
-                        let _ = appState.createNewConversation(modelType: model)
+                        print("Creating new conversation with model: \(model)")
+                        let id = appState.createNewConversation(modelType: model)
+                        print("New conversation ID: \(id)")
+                        activeConversationId = id
+                        print("Active ID updated to: \(String(describing: activeConversationId))")
                     }) {
                         VStack {
                             modelIcon(for: model)

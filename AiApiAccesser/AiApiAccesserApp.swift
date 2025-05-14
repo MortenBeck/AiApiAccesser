@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 
 @main
 struct AiApiAccesserApp: App {
@@ -36,6 +35,11 @@ struct AiApiAccesserApp: App {
                     appState.showAPIManagement = true
                 }
                 .keyboardShortcut("k", modifiers: .command)
+                
+                Button("Usage Monitor") {
+                    appState.showUsageMonitor = true
+                }
+                .keyboardShortcut("u", modifiers: .command)
             }
         }
     }

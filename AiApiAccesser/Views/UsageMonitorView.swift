@@ -93,7 +93,7 @@ struct UsageMonitorView: View {
     private var tokenUsageChart: some View {
         VStack {
             // For each model type, show usage
-            ForEach(LLMType.allCases) { type in
+            ForEach(LLMType.allCases, id: \.self) { type in
                 if let settings = appState.llmSettings[type],
                    let modelName = getModelDisplayName(type: type, modelId: settings.modelName) {
                     modelTokenUsageView(
@@ -110,7 +110,7 @@ struct UsageMonitorView: View {
     private var apiCallsChart: some View {
         VStack {
             // For each model type, show API calls
-            ForEach(LLMType.allCases) { type in
+            ForEach(LLMType.allCases, id: \.self) { type in
                 if let settings = appState.llmSettings[type],
                    let modelName = getModelDisplayName(type: type, modelId: settings.modelName) {
                     modelAPICallsView(
@@ -129,7 +129,7 @@ struct UsageMonitorView: View {
             Text("Budget Status")
                 .font(.headline)
             
-            ForEach(LLMType.allCases) { type in
+            ForEach(LLMType.allCases, id: \.self) { type in
                 if let settings = appState.llmSettings[type],
                    let modelName = getModelDisplayName(type: type, modelId: settings.modelName) {
                     

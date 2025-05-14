@@ -188,8 +188,8 @@ struct ChatView: View {
         // Get the appropriate LLM service
         let service = appState.getServiceForType(conversation.modelType)
         
-        // Send message to LLM
-        service.sendMessage(messages: conversation.messages, documents: attachedDocuments)
+        // Send message to LLM with usage tracking
+        service.sendMessageWithTracking(messages: conversation.messages, documents: attachedDocuments, appState: appState)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { completion in
                 isProcessingMessage = false

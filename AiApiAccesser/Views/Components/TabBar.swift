@@ -3,90 +3,83 @@ import SwiftUI
 struct TabBar: View {
     @EnvironmentObject var appState: AppState
     @Binding var activeConversationId: UUID?
-    @State private var hoveredConversationId: UUID?
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 1) {
+            HStack(spacing: 4) {
+                // Existing conversation tabs
                 ForEach(appState.conversations) { conversation in
-                    TabBarItem(
-                        title: conversation.title,
-                        modelType: conversation.modelType,
+                    ConversationTab(
+                        conversation: conversation,
                         isActive: activeConversationId == conversation.id,
-                        isHovered: hoveredConversationId == conversation.id,
+                        onSelect: {
+                            activeConversationId = conversation.id
+                        },
                         onClose: {
-                            // If this is the active conversation, set activeConversationId to the next available one
-                            if activeConversationId == conversation.id {
-                                if let index = appState.conversations.firstIndex(where: { $0.id == conversation.id }) {
-                                    if index < appState.conversations.count - 1 {
-                                        activeConversationId = appState.conversations[index + 1].id
-                                    } else if index > 0 {
-                                        activeConversationId = appState.conversations[index - 1].id
-                                    } else {
-                                        activeConversationId = nil
-                                    }
-                                }
-                            }
-                            
-                            // Delete the conversation
-                            appState.deleteConversation(id: conversation.id)
+                            handleCloseTab(id: conversation.id)
                         }
                     )
-                    .onHover { isHovered in
-                        hoveredConversationId = isHovered ? conversation.id : nil
-                    }
-                    .onTapGesture {
-                        activeConversationId = conversation.id
-                    }
-                    .contextMenu {
-                        Button("Close") {
-                            // Repeat the same logic as onClose
-                            if activeConversationId == conversation.id {
-                                if let index = appState.conversations.firstIndex(where: { $0.id == conversation.id }) {
-                                    if index < appState.conversations.count - 1 {
-                                        activeConversationId = appState.conversations[index + 1].id
-                                    } else if index > 0 {
-                                        activeConversationId = appState.conversations[index - 1].id
-                                    } else {
-                                        activeConversationId = nil
-                                    }
-                                }
-                            }
-                            
-                            appState.deleteConversation(id: conversation.id)
-                        }
-                        
-                        Button("Duplicate") {
-                            // Create a new conversation with same model type
-                            appState.createNewConversation(modelType: conversation.modelType)
-                        }
-                    }
                 }
                 
-                // New tab button
+                // New tab button - simple and direct
                 Button(action: {
-                    let newConversationId = appState.createNewConversation()
-                    activeConversationId = newConversationId
+                    print("Creating new conversation")
+                    let id = appState.createNewConversation()
+                    print("New conversation ID: \(id)")
+                    activeConversationId = id
+                    print("Active ID updated to: \(String(describing: activeConversationId))")
                 }) {
-                    Image(systemName: "plus")
-                        .padding(8)
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("New")
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Color(NSColor.windowBackgroundColor).opacity(0.3))
+                    .cornerRadius(6)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal, 8)
+                .padding(.horizontal, 4)
             }
             .padding(.vertical, 4)
-            .background(Color(NSColor.windowBackgroundColor).opacity(0.3))
         }
         .frame(height: 40)
         .background(Color(NSColor.windowBackgroundColor).opacity(0.8))
     }
+    
+    private func handleCloseTab(id: UUID) {
+        print("Closing tab with ID: \(id)")
+        
+        // Find the index of the conversation to be closed
+        if let index = appState.conversations.firstIndex(where: { $0.id == id }) {
+            // Determine the next tab to be active
+            if id == activeConversationId {
+                if index < appState.conversations.count - 1 {
+                    // If not the last tab, select the next one
+                    activeConversationId = appState.conversations[index + 1].id
+                    print("Setting active to next: \(String(describing: activeConversationId))")
+                } else if index > 0 {
+                    // If the last tab, select the previous one
+                    activeConversationId = appState.conversations[index - 1].id
+                    print("Setting active to previous: \(String(describing: activeConversationId))")
+                } else {
+                    // If it's the only tab, set to nil
+                    activeConversationId = nil
+                    print("Setting active to nil")
+                }
+            }
+        }
+        
+        // Delete the conversation
+        print("Deleting conversation")
+        appState.deleteConversation(id: id)
+    }
 }
 
-struct TabBarItem: View {
-    let title: String
-    let modelType: LLMType
+struct ConversationTab: View {
+    let conversation: Conversation
     let isActive: Bool
-    let isHovered: Bool
+    let onSelect: () -> Void
     let onClose: () -> Void
     
     var body: some View {
@@ -96,35 +89,32 @@ struct TabBarItem: View {
                 .font(.system(size: 14))
             
             // Title
-            Text(title)
+            Text(conversation.title)
                 .lineLimit(1)
                 .truncationMode(.tail)
             
-            if isActive || isHovered {
-                // Close button (only shown when active or hovered)
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 10))
-                        .foregroundColor(.gray)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.leading, 4)
+            // Always show close button for simplicity
+            Button(action: onClose) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 10))
+                    .foregroundColor(.red)
             }
+            .buttonStyle(PlainButtonStyle())
+            .padding(.leading, 4)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 6)
-                .fill(isActive ? Color(NSColor.windowBackgroundColor).opacity(0.6) : Color.clear)
+                .fill(isActive ? Color.blue.opacity(0.3) : Color(NSColor.windowBackgroundColor).opacity(0.3))
         )
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isHovered && !isActive ? Color(NSColor.windowBackgroundColor).opacity(0.3) : Color.clear)
-        )
+        .onTapGesture {
+            onSelect()
+        }
     }
     
     private var modelIcon: some View {
-        switch modelType {
+        switch conversation.modelType {
         case .chatGPT:
             return Image(systemName: "bubble.left.and.text.bubble.right")
                 .foregroundColor(.green)

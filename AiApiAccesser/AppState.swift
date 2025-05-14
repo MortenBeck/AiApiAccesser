@@ -7,8 +7,13 @@ class AppState: ObservableObject {
     @Published var activeConversationId: UUID?
     @Published var showSettings = false
     @Published var showAPIManagement = false
+    @Published var showUsageMonitor = false
     @Published var llmSettings: [LLMType: LLMSettings] = [:]
     @Published var isLoading = false
+    
+    // Usage tracking properties
+    @Published var tokenUsage: [String: Int] = [:]
+    @Published var requestCounts: [String: Int] = [:]
     
     private let persistenceService = PersistenceService()
     private var cancellables = Set<AnyCancellable>()
@@ -19,13 +24,18 @@ class AppState: ObservableObject {
     private(set) lazy var deepSeekService = DeepSeekService(settings: llmSettings[.deepSeek])
     
     init() {
+        print("AppState init")
         // Initialize with default settings
         LLMType.allCases.forEach { type in
             llmSettings[type] = LLMSettings.defaultSettings(for: type)
         }
+        
+        // Load usage data
+        loadUsageData()
     }
     
     func loadSettings() {
+        print("Loading settings")
         isLoading = true
         
         persistenceService.loadSettings()
@@ -43,32 +53,13 @@ class AppState: ObservableObject {
                 self.deepSeekService.settings = settings[.deepSeek] ?? LLMSettings.defaultSettings(for: .deepSeek)
             })
             .store(in: &cancellables)
-    }
-    
-    func saveSettings() {
-        guard let openAISettings = llmSettings[.chatGPT],
-              let claudeSettings = llmSettings[.claude],
-              let deepSeekSettings = llmSettings[.deepSeek] else {
-            return
-        }
         
-        persistenceService.saveSettings(openAI: openAISettings, claude: claudeSettings, deepSeek: deepSeekSettings)
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
-                    logError("Failed to save settings: \(error)")
-                }
-            }, receiveValue: { _ in
-                logInfo("Settings saved successfully")
-                
-                // Update services with new settings
-                self.openAIService.settings = openAISettings
-                self.claudeService.settings = claudeSettings
-                self.deepSeekService.settings = deepSeekSettings
-            })
-            .store(in: &cancellables)
+        // Load usage data
+        loadUsageData()
     }
     
     func loadConversations() {
+        print("Loading conversations")
         isLoading = true
         
         persistenceService.loadAllConversations()
@@ -78,20 +69,28 @@ class AppState: ObservableObject {
                 }
                 self.isLoading = false
             }, receiveValue: { conversations in
+                print("Loaded \(conversations.count) conversations")
                 self.conversations = conversations
                 
                 // Set active conversation to the most recent one if none is active
                 if self.activeConversationId == nil && !conversations.isEmpty {
                     self.activeConversationId = conversations[0].id
+                    print("Setting active conversation to \(String(describing: self.activeConversationId))")
                 }
             })
             .store(in: &cancellables)
     }
     
     func createNewConversation(modelType: LLMType = .claude) -> UUID {
+        print("Creating new conversation with model \(modelType)")
         let newConversation = Conversation(modelType: modelType)
+        print("New conversation ID: \(newConversation.id)")
+        
         conversations.insert(newConversation, at: 0)
+        print("Conversations count after insert: \(conversations.count)")
+        
         activeConversationId = newConversation.id
+        print("Set active conversation ID to: \(String(describing: activeConversationId))")
         
         // Save the new conversation
         persistenceService.saveConversation(newConversation)
@@ -128,6 +127,8 @@ class AppState: ObservableObject {
     }
     
     func deleteConversation(id: UUID) {
+        print("Deleting conversation with ID: \(id)")
+        
         persistenceService.deleteConversation(id: id)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
@@ -138,10 +139,17 @@ class AppState: ObservableObject {
                 
                 // Remove from list
                 self.conversations.removeAll { $0.id == id }
+                print("Conversations count after delete: \(self.conversations.count)")
                 
                 // If this was the active conversation, set a new active one
                 if self.activeConversationId == id {
-                    self.activeConversationId = self.conversations.first?.id
+                    if !self.conversations.isEmpty {
+                        self.activeConversationId = self.conversations.first?.id
+                        print("Set new active ID to: \(String(describing: self.activeConversationId))")
+                    } else {
+                        self.activeConversationId = nil
+                        print("Set active ID to nil")
+                    }
                 }
             })
             .store(in: &cancellables)
@@ -155,6 +163,43 @@ class AppState: ObservableObject {
             return claudeService
         case .deepSeek:
             return deepSeekService
+        }
+    }
+    
+    // MARK: - Usage tracking methods
+    
+    func resetTokenUsage() {
+        tokenUsage = [:]
+        saveUsageData()
+    }
+    
+    func resetRequestCounts() {
+        requestCounts = [:]
+        saveUsageData()
+    }
+    
+    func trackTokenUsage(model: String, count: Int) {
+        tokenUsage[model] = (tokenUsage[model] ?? 0) + count
+        saveUsageData()
+    }
+    
+    func trackRequest(model: String) {
+        requestCounts[model] = (requestCounts[model] ?? 0) + 1
+        saveUsageData()
+    }
+    
+    func saveUsageData() {
+        UserDefaults.standard.set(tokenUsage, forKey: "tokenUsage")
+        UserDefaults.standard.set(requestCounts, forKey: "requestCounts")
+    }
+    
+    func loadUsageData() {
+        if let savedTokenUsage = UserDefaults.standard.object(forKey: "tokenUsage") as? [String: Int] {
+            tokenUsage = savedTokenUsage
+        }
+        
+        if let savedRequestCounts = UserDefaults.standard.object(forKey: "requestCounts") as? [String: Int] {
+            requestCounts = savedRequestCounts
         }
     }
 }
