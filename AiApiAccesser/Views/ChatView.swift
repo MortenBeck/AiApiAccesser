@@ -7,6 +7,8 @@ struct ChatView: View {
     @State private var userInput = ""
     @State private var attachedDocuments: [Document] = []
     @State private var isProcessingMessage = false
+    @State private var errorMessage: String?
+    @State private var showError = false
     @State private var cancellables = Set<AnyCancellable>()
     @State private var showDocumentPicker = false
     @State private var showModelSelector = false
@@ -19,7 +21,7 @@ struct ChatView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Chat header
+            // Chat header with toolbar
             chatHeader
             
             // Message list
@@ -45,6 +47,13 @@ struct ChatView: View {
             inputArea
         }
         .background(Color(NSColor.windowBackgroundColor))
+        .alert(isPresented: $showError) {
+            Alert(
+                title: Text("Error"),
+                message: Text(errorMessage ?? "An unknown error occurred"),
+                dismissButton: .default(Text("OK"))
+            )
+        }
     }
     
     private var chatHeader: some View {
@@ -132,6 +141,8 @@ struct ChatView: View {
             }
         } catch {
             logError("Document selection failed: \(error)")
+            errorMessage = "Failed to select document: \(error.localizedDescription)"
+            showError = true
         }
     }
     
@@ -140,6 +151,8 @@ struct ChatView: View {
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
                     logError("Failed to process document: \(error)")
+                    errorMessage = "Failed to process document: \(error.localizedDescription)"
+                    showError = true
                 }
             }, receiveValue: { document in
                 self.attachedDocuments.append(document)
@@ -185,9 +198,8 @@ struct ChatView: View {
                     logError("Failed to get response: \(error)")
                     
                     // Add error message
-                    let errorMessage = Message.assistantMessage(
-                        content: "Sorry, there was an error processing your request: \(error.localizedDescription)"
-                    )
+                    let errorMessageText = "Sorry, there was an error processing your request: \(error.localizedDescription)"
+                    let errorMessage = Message.assistantMessage(content: errorMessageText)
                     
                     var errorConversation = self.conversation
                     errorConversation.addMessage(errorMessage)

@@ -88,7 +88,7 @@ class AppState: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func createNewConversation(modelType: LLMType = .claude) {
+    func createNewConversation(modelType: LLMType = .claude) -> UUID {
         let newConversation = Conversation(modelType: modelType)
         conversations.insert(newConversation, at: 0)
         activeConversationId = newConversation.id
@@ -103,6 +103,8 @@ class AppState: ObservableObject {
                 logInfo("New conversation created successfully")
             })
             .store(in: &cancellables)
+        
+        return newConversation.id
     }
     
     func saveConversation(_ conversation: Conversation) {

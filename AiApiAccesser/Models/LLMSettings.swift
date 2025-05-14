@@ -16,6 +16,12 @@ struct LLMSettings: Codable {
     var documentChunkSize: Int
     var documentOverlap: Int
     
+    // New fields
+    var enableRateLimit: Bool = false
+    var maxRequestsPerMinute: Int = 10
+    var enableTokenBudget: Bool = false
+    var dailyTokenBudget: Int = 100000
+    
     static func defaultSettings(for type: LLMType) -> LLMSettings {
         switch type {
         case .chatGPT:
@@ -25,7 +31,11 @@ struct LLMSettings: Codable {
                 maxTokens: 4000,
                 extraSystemPrompt: "",
                 documentChunkSize: 4000,
-                documentOverlap: 200
+                documentOverlap: 200,
+                enableRateLimit: false,
+                maxRequestsPerMinute: 10,
+                enableTokenBudget: false,
+                dailyTokenBudget: 100000
             )
         case .claude:
             return LLMSettings(
@@ -34,7 +44,11 @@ struct LLMSettings: Codable {
                 maxTokens: 4000,
                 extraSystemPrompt: "",
                 documentChunkSize: 4000,
-                documentOverlap: 200
+                documentOverlap: 200,
+                enableRateLimit: false,
+                maxRequestsPerMinute: 10,
+                enableTokenBudget: false,
+                dailyTokenBudget: 100000
             )
         case .deepSeek:
             return LLMSettings(
@@ -43,7 +57,11 @@ struct LLMSettings: Codable {
                 maxTokens: 4000,
                 extraSystemPrompt: "",
                 documentChunkSize: 4000,
-                documentOverlap: 200
+                documentOverlap: 200,
+                enableRateLimit: false,
+                maxRequestsPerMinute: 10,
+                enableTokenBudget: false,
+                dailyTokenBudget: 100000
             )
         }
     }

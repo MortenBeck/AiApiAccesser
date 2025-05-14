@@ -26,6 +26,25 @@ struct MainView: View {
             APIManagementView()
                 .darkModeOnly()
         }
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                HStack(spacing: 16) {
+                    Button(action: {
+                        appState.showAPIManagement = true
+                    }) {
+                        Image(systemName: "key.fill")
+                            .help("API Management")
+                    }
+                    
+                    Button(action: {
+                        appState.showSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                            .help("Settings")
+                    }
+                }
+            }
+        }
         .onAppear {
             activeConversationId = appState.activeConversationId
         }
@@ -48,7 +67,7 @@ struct MainView: View {
             HStack(spacing: 20) {
                 ForEach(LLMType.allCases) { model in
                     Button(action: {
-                        appState.createNewConversation(modelType: model)
+                        let _ = appState.createNewConversation(modelType: model)
                     }) {
                         VStack {
                             modelIcon(for: model)

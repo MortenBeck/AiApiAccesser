@@ -17,6 +17,10 @@ struct APIManagementView: View {
     @State private var claudeKeyValid = false
     @State private var deepSeekKeyValid = false
     
+    @State private var openAIStatusMessage: String?
+    @State private var claudeStatusMessage: String?
+    @State private var deepSeekStatusMessage: String?
+    
     @State private var cancellables = Set<AnyCancellable>()
     
     private let keychainManager = KeychainManager()
@@ -47,6 +51,7 @@ struct APIManagementView: View {
                         apiKey: $openAIApiKey,
                         isValidating: $isValidatingOpenAI,
                         isValid: $openAIKeyValid,
+                        statusMessage: $openAIStatusMessage,
                         validateAction: validateOpenAIKey,
                         saveAction: saveOpenAIKey
                     )
@@ -59,6 +64,7 @@ struct APIManagementView: View {
                         apiKey: $claudeApiKey,
                         isValidating: $isValidatingClaude,
                         isValid: $claudeKeyValid,
+                        statusMessage: $claudeStatusMessage,
                         validateAction: validateClaudeKey,
                         saveAction: saveClaudeKey
                     )
@@ -71,6 +77,7 @@ struct APIManagementView: View {
                         apiKey: $deepSeekApiKey,
                         isValidating: $isValidatingDeepSeek,
                         isValid: $deepSeekKeyValid,
+                        statusMessage: $deepSeekStatusMessage,
                         validateAction: validateDeepSeekKey,
                         saveAction: saveDeepSeekKey
                     )
@@ -90,6 +97,7 @@ struct APIManagementView: View {
         apiKey: Binding<String>,
         isValidating: Binding<Bool>,
         isValid: Binding<Bool>,
+        statusMessage: Binding<String?>,
         validateAction: @escaping () -> Void,
         saveAction: @escaping () -> Void
     ) -> some View {
@@ -104,6 +112,13 @@ struct APIManagementView: View {
             SecureField("API Key", text: apiKey)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .disabled(isValidating.wrappedValue)
+            
+            if let message = statusMessage.wrappedValue {
+                Text(message)
+                    .font(.caption)
+                    .foregroundColor(isValid.wrappedValue ? .green : .red)
+                    .padding(.top, 4)
+            }
             
             HStack {
                 Button("Validate") {
@@ -153,11 +168,13 @@ struct APIManagementView: View {
         
         isValidatingOpenAI = true
         openAIKeyValid = false
+        openAIStatusMessage = "Validating..."
         
         // Don't validate if it's the placeholder
         if openAIApiKey == "••••••••••••••••••••••••••" {
             isValidatingOpenAI = false
             openAIKeyValid = true
+            openAIStatusMessage = "API key is valid"
             return
         }
         
@@ -169,9 +186,11 @@ struct APIManagementView: View {
                 if case .failure(let error) = completion {
                     logError("OpenAI API key validation failed: \(error)")
                     openAIKeyValid = false
+                    openAIStatusMessage = "Error: \(error.localizedDescription)"
                 }
             }, receiveValue: { isValid in
                 openAIKeyValid = isValid
+                openAIStatusMessage = isValid ? "API key is valid" : "Invalid API key"
             })
             .store(in: &cancellables)
     }
@@ -181,11 +200,13 @@ struct APIManagementView: View {
         
         isValidatingClaude = true
         claudeKeyValid = false
+        claudeStatusMessage = "Validating..."
         
         // Don't validate if it's the placeholder
         if claudeApiKey == "••••••••••••••••••••••••••" {
             isValidatingClaude = false
             claudeKeyValid = true
+            claudeStatusMessage = "API key is valid"
             return
         }
         
@@ -197,9 +218,11 @@ struct APIManagementView: View {
                 if case .failure(let error) = completion {
                     logError("Claude API key validation failed: \(error)")
                     claudeKeyValid = false
+                    claudeStatusMessage = "Error: \(error.localizedDescription)"
                 }
             }, receiveValue: { isValid in
                 claudeKeyValid = isValid
+                claudeStatusMessage = isValid ? "API key is valid" : "Invalid API key"
             })
             .store(in: &cancellables)
     }
@@ -209,11 +232,13 @@ struct APIManagementView: View {
         
         isValidatingDeepSeek = true
         deepSeekKeyValid = false
+        deepSeekStatusMessage = "Validating..."
         
         // Don't validate if it's the placeholder
         if deepSeekApiKey == "••••••••••••••••••••••••••" {
             isValidatingDeepSeek = false
             deepSeekKeyValid = true
+            deepSeekStatusMessage = "API key is valid"
             return
         }
         
@@ -225,9 +250,11 @@ struct APIManagementView: View {
                 if case .failure(let error) = completion {
                     logError("DeepSeek API key validation failed: \(error)")
                     deepSeekKeyValid = false
+                    deepSeekStatusMessage = "Error: \(error.localizedDescription)"
                 }
             }, receiveValue: { isValid in
                 deepSeekKeyValid = isValid
+                deepSeekStatusMessage = isValid ? "API key is valid" : "Invalid API key"
             })
             .store(in: &cancellables)
     }
@@ -238,8 +265,10 @@ struct APIManagementView: View {
             do {
                 try keychainManager.saveApiKey(openAIApiKey, for: .chatGPT)
                 logInfo("OpenAI API key saved successfully")
+                openAIStatusMessage = "API key saved successfully"
             } catch {
                 logError("Failed to save OpenAI API key: \(error)")
+                openAIStatusMessage = "Failed to save API key: \(error.localizedDescription)"
             }
         }
     }
@@ -250,8 +279,10 @@ struct APIManagementView: View {
             do {
                 try keychainManager.saveApiKey(claudeApiKey, for: .claude)
                 logInfo("Claude API key saved successfully")
+                claudeStatusMessage = "API key saved successfully"
             } catch {
                 logError("Failed to save Claude API key: \(error)")
+                claudeStatusMessage = "Failed to save API key: \(error.localizedDescription)"
             }
         }
     }
@@ -262,8 +293,10 @@ struct APIManagementView: View {
             do {
                 try keychainManager.saveApiKey(deepSeekApiKey, for: .deepSeek)
                 logInfo("DeepSeek API key saved successfully")
+                deepSeekStatusMessage = "API key saved successfully"
             } catch {
                 logError("Failed to save DeepSeek API key: \(error)")
+                deepSeekStatusMessage = "Failed to save API key: \(error.localizedDescription)"
             }
         }
     }

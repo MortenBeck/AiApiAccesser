@@ -13,7 +13,24 @@ struct TabBar: View {
                         title: conversation.title,
                         modelType: conversation.modelType,
                         isActive: activeConversationId == conversation.id,
-                        isHovered: hoveredConversationId == conversation.id
+                        isHovered: hoveredConversationId == conversation.id,
+                        onClose: {
+                            // If this is the active conversation, set activeConversationId to the next available one
+                            if activeConversationId == conversation.id {
+                                if let index = appState.conversations.firstIndex(where: { $0.id == conversation.id }) {
+                                    if index < appState.conversations.count - 1 {
+                                        activeConversationId = appState.conversations[index + 1].id
+                                    } else if index > 0 {
+                                        activeConversationId = appState.conversations[index - 1].id
+                                    } else {
+                                        activeConversationId = nil
+                                    }
+                                }
+                            }
+                            
+                            // Delete the conversation
+                            appState.deleteConversation(id: conversation.id)
+                        }
                     )
                     .onHover { isHovered in
                         hoveredConversationId = isHovered ? conversation.id : nil
@@ -23,6 +40,19 @@ struct TabBar: View {
                     }
                     .contextMenu {
                         Button("Close") {
+                            // Repeat the same logic as onClose
+                            if activeConversationId == conversation.id {
+                                if let index = appState.conversations.firstIndex(where: { $0.id == conversation.id }) {
+                                    if index < appState.conversations.count - 1 {
+                                        activeConversationId = appState.conversations[index + 1].id
+                                    } else if index > 0 {
+                                        activeConversationId = appState.conversations[index - 1].id
+                                    } else {
+                                        activeConversationId = nil
+                                    }
+                                }
+                            }
+                            
                             appState.deleteConversation(id: conversation.id)
                         }
                         
@@ -33,8 +63,10 @@ struct TabBar: View {
                     }
                 }
                 
+                // New tab button
                 Button(action: {
-                    appState.createNewConversation()
+                    let newConversationId = appState.createNewConversation()
+                    activeConversationId = newConversationId
                 }) {
                     Image(systemName: "plus")
                         .padding(8)
@@ -55,6 +87,7 @@ struct TabBarItem: View {
     let modelType: LLMType
     let isActive: Bool
     let isHovered: Bool
+    let onClose: () -> Void
     
     var body: some View {
         HStack(spacing: 6) {
@@ -69,9 +102,7 @@ struct TabBarItem: View {
             
             if isActive || isHovered {
                 // Close button (only shown when active or hovered)
-                Button(action: {
-                    // Will be handled by contextMenu
-                }) {
+                Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 10))
                         .foregroundColor(.gray)

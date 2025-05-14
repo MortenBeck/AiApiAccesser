@@ -20,7 +20,7 @@ struct AiApiAccesserApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Chat") {
-                    appState.createNewConversation()
+                    let _ = appState.createNewConversation()
                 }
                 .keyboardShortcut("n", modifiers: .command)
             }

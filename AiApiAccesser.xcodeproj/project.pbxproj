@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5AAF25422DD519DB00E24095 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 5AAF25412DD519DB00E24095 /* LICENSE */; };
+		5AAF258B2DD519FD00E24095 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 5AAF256A2DD519FD00E24095 /* README.md */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5AAF24F82DD4FB9B00E24095 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +32,8 @@
 		5AAF24E92DD4FB9800E24095 /* AiApiAccesser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AiApiAccesser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AAF24F72DD4FB9B00E24095 /* AiApiAccesserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AiApiAccesserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AAF25012DD4FB9C00E24095 /* AiApiAccesserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AiApiAccesserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5AAF25412DD519DB00E24095 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		5AAF256A2DD519FD00E24095 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -65,6 +72,8 @@
 		5AAF24E02DD4FB9800E24095 = {
 			isa = PBXGroup;
 			children = (
+				5AAF25412DD519DB00E24095 /* LICENSE */,
+				5AAF256A2DD519FD00E24095 /* README.md */,
 				5AAF24EB2DD4FB9800E24095 /* AiApiAccesser */,
 				5AAF24EA2DD4FB9800E24095 /* Products */,
 			);
@@ -195,6 +204,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5AAF25422DD519DB00E24095 /* LICENSE in Resources */,
+				5AAF258B2DD519FD00E24095 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
