@@ -44,11 +44,20 @@ struct MessageBubble: View {
     private var assistantBubble: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
-                // Assistant icon
-                modelIcon
-                    .font(.system(size: 20))
-                    .frame(width: 30, height: 30)
-                    .padding(.trailing, 8)
+                // Assistant icon based on model type
+                if let modelType = message.modelType {
+                    modelIcon(for: modelType)
+                        .font(.system(size: 20))
+                        .frame(width: 30, height: 30)
+                        .padding(.trailing, 8)
+                } else {
+                    // Fallback generic icon if no model type
+                    Image(systemName: "brain")
+                        .font(.system(size: 20))
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.purple)
+                        .padding(.trailing, 8)
+                }
                 
                 // Message content
                 markdownText(message.content)
@@ -68,9 +77,17 @@ struct MessageBubble: View {
         return Text(attributedString ?? AttributedString(content))
     }
     
-    private var modelIcon: some View {
-        // This should ideally come from the conversation's model type
-        Image(systemName: "brain")
-            .foregroundColor(.purple)
+    private func modelIcon(for modelType: LLMType) -> some View {
+        switch modelType {
+        case .chatGPT:
+            return Image(systemName: "bubble.left.and.text.bubble.right")
+                .foregroundColor(.green)
+        case .claude:
+            return Image(systemName: "brain")
+                .foregroundColor(.purple)
+        case .deepSeek:
+            return Image(systemName: "magnifyingglass")
+                .foregroundColor(.blue)
+        }
     }
 }

@@ -1,5 +1,6 @@
-import SwiftUI
+import Foundation
 import Combine
+import SwiftUI
 
 // Global application state
 class AppState: ObservableObject {
@@ -70,12 +71,15 @@ class AppState: ObservableObject {
                 self.isLoading = false
             }, receiveValue: { conversations in
                 print("Loaded \(conversations.count) conversations")
-                self.conversations = conversations
-                
-                // Set active conversation to the most recent one if none is active
-                if self.activeConversationId == nil && !conversations.isEmpty {
-                    self.activeConversationId = conversations[0].id
-                    print("Setting active conversation to \(String(describing: self.activeConversationId))")
+                // Update state on the main thread
+                DispatchQueue.main.async {
+                    self.conversations = conversations
+                    
+                    // Set active conversation to the most recent one if none is active
+                    if self.activeConversationId == nil && !conversations.isEmpty {
+                        self.activeConversationId = conversations[0].id
+                        print("Setting active conversation to \(String(describing: self.activeConversationId))")
+                    }
                 }
             })
             .store(in: &cancellables)
@@ -86,11 +90,14 @@ class AppState: ObservableObject {
         let newConversation = Conversation(modelType: modelType)
         print("New conversation ID: \(newConversation.id)")
         
-        conversations.insert(newConversation, at: 0)
-        print("Conversations count after insert: \(conversations.count)")
-        
-        activeConversationId = newConversation.id
-        print("Set active conversation ID to: \(String(describing: activeConversationId))")
+        // Update on main thread
+        DispatchQueue.main.async {
+            self.conversations.insert(newConversation, at: 0)
+            print("Conversations count after insert: \(self.conversations.count)")
+            
+            self.activeConversationId = newConversation.id
+            print("Set active conversation ID to: \(String(describing: self.activeConversationId))")
+        }
         
         // Save the new conversation
         persistenceService.saveConversation(newConversation)
@@ -115,12 +122,14 @@ class AppState: ObservableObject {
             }, receiveValue: { _ in
                 logInfo("Conversation saved successfully")
                 
-                // Update the conversation in the list
-                if let index = self.conversations.firstIndex(where: { $0.id == conversation.id }) {
-                    self.conversations[index] = conversation
-                    
-                    // Re-sort conversations by last updated date
-                    self.conversations.sort { $0.lastUpdatedAt > $1.lastUpdatedAt }
+                // Update the conversation in the list on main thread
+                DispatchQueue.main.async {
+                    if let index = self.conversations.firstIndex(where: { $0.id == conversation.id }) {
+                        self.conversations[index] = conversation
+                        
+                        // Re-sort conversations by last updated date
+                        self.conversations.sort { $0.lastUpdatedAt > $1.lastUpdatedAt }
+                    }
                 }
             })
             .store(in: &cancellables)
@@ -137,18 +146,21 @@ class AppState: ObservableObject {
             }, receiveValue: { _ in
                 logInfo("Conversation deleted successfully")
                 
-                // Remove from list
-                self.conversations.removeAll { $0.id == id }
-                print("Conversations count after delete: \(self.conversations.count)")
-                
-                // If this was the active conversation, set a new active one
-                if self.activeConversationId == id {
-                    if !self.conversations.isEmpty {
-                        self.activeConversationId = self.conversations.first?.id
-                        print("Set new active ID to: \(String(describing: self.activeConversationId))")
-                    } else {
-                        self.activeConversationId = nil
-                        print("Set active ID to nil")
+                // Update state on main thread
+                DispatchQueue.main.async {
+                    // Remove from list
+                    self.conversations.removeAll { $0.id == id }
+                    print("Conversations count after delete: \(self.conversations.count)")
+                    
+                    // If this was the active conversation, set a new active one
+                    if self.activeConversationId == id {
+                        if !self.conversations.isEmpty {
+                            self.activeConversationId = self.conversations.first?.id
+                            print("Set new active ID to: \(String(describing: self.activeConversationId))")
+                        } else {
+                            self.activeConversationId = nil
+                            print("Set active ID to nil")
+                        }
                     }
                 }
             })
@@ -195,13 +207,19 @@ class AppState: ObservableObject {
     }
     
     func trackTokenUsage(model: String, count: Int) {
-        tokenUsage[model] = (tokenUsage[model] ?? 0) + count
-        saveUsageData()
+        // Update on main thread
+        DispatchQueue.main.async {
+            self.tokenUsage[model] = (self.tokenUsage[model] ?? 0) + count
+            self.saveUsageData()
+        }
     }
     
     func trackRequest(model: String) {
-        requestCounts[model] = (requestCounts[model] ?? 0) + 1
-        saveUsageData()
+        // Update on main thread
+        DispatchQueue.main.async {
+            self.requestCounts[model] = (self.requestCounts[model] ?? 0) + 1
+            self.saveUsageData()
+        }
     }
     
     func saveUsageData() {

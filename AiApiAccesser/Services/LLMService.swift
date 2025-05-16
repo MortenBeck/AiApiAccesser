@@ -22,7 +22,9 @@ enum LLMServiceError: Error {
 extension LLMService {
     func sendMessageWithTracking(messages: [Message], documents: [Document]?, appState: AppState) -> AnyPublisher<String, Error> {
         // Track API request
-        appState.trackRequest(model: settings.modelName)
+        DispatchQueue.main.async {
+            appState.trackRequest(model: self.settings.modelName)
+        }
         
         return sendMessage(messages: messages, documents: documents)
             .map { response -> String in
@@ -30,8 +32,10 @@ extension LLMService {
                 let inputTokens = self.estimateTokens(messages: messages, documents: documents)
                 let outputTokens = self.estimateTokens(text: response)
                 
-                // Track token usage
-                appState.trackTokenUsage(model: self.settings.modelName, count: inputTokens + outputTokens)
+                // Track token usage on main thread
+                DispatchQueue.main.async {
+                    appState.trackTokenUsage(model: self.settings.modelName, count: inputTokens + outputTokens)
+                }
                 
                 return response
             }

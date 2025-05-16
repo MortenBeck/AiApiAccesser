@@ -1,10 +1,11 @@
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct ChatView: View {
     @EnvironmentObject var appState: AppState
     @State private var conversation: Conversation
     @State private var userInput = ""
+    @State private var textHeight: CGFloat = 40 // Default minimum height
     @State private var attachedDocuments: [Document] = []
     @State private var isProcessingMessage = false
     @State private var errorMessage: String?
@@ -80,7 +81,7 @@ struct ChatView: View {
             .keyboardShortcut("o", modifiers: [.command])
             .fileImporter(
                 isPresented: $showDocumentPicker,
-                allowedContentTypes: [.pdf, .text, .plainText, .image, .png, .jpeg],
+                allowedContentTypes: [.pdf, .text, .plainText, .image, .png, .jpeg, .item],
                 allowsMultipleSelection: true
             ) { result in
                 handleDocumentSelection(result)
@@ -110,13 +111,39 @@ struct ChatView: View {
             }
             
             HStack(alignment: .bottom, spacing: 12) {
-                // Text input
-                TextField("Type your message here...", text: $userInput, axis: .vertical)
-                    .lineLimit(5)
-                    .textFieldStyle(PlainTextFieldStyle())
-                    .padding(12)
-                    .background(Color(NSColor.textBackgroundColor).opacity(0.3))
-                    .cornerRadius(12)
+                // Auto-sizing text editor
+                AutoSizingTextEditor(text: $userInput, onHeightChange: { height in
+                    textHeight = max(40, min(height, 120)) // Constrain between min 40 and max 120
+                })
+                .frame(height: textHeight)
+                .padding(8)
+                .background(Color(NSColor.textBackgroundColor).opacity(0.3))
+                .cornerRadius(12)
+                .overlay(
+                    // Placeholder text when input is empty
+                    Group {
+                        if userInput.isEmpty {
+                            Text("Type your message here... (Shift+Enter for new line)")
+                                .foregroundColor(.gray)
+                                .padding(.leading, 12)
+                                .padding(.top, 10)
+                                .allowsHitTesting(false)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        }
+                    }
+                )
+                .onKeyPress(.return) {
+                    if NSEvent.modifierFlags.contains(.shift) {
+                        // Add a new line with Shift+Enter
+                        userInput += "\n"
+                        return .handled
+                    } else if !userInput.trimmingCharacters().isEmpty || !attachedDocuments.isEmpty {
+                        // Send message with Enter (if we have content)
+                        sendMessage()
+                        return .handled
+                    }
+                    return .ignored
+                }
                 
                 // Send button
                 Button(action: sendMessage) {
@@ -136,8 +163,22 @@ struct ChatView: View {
     private func handleDocumentSelection(_ result: Result<[URL], Error>) {
         do {
             let urls = try result.get()
+            
             for url in urls {
+                // Ensure we have security-scoped access to the file
+                guard url.startAccessingSecurityScopedResource() else {
+                    logError("Failed to access security-scoped resource: \(url.absoluteString)")
+                    errorMessage = "Failed to access file: \(url.lastPathComponent). Permission denied."
+                    showError = true
+                    continue
+                }
+                
                 processDocument(at: url)
+                
+                // Important: Release the security-scoped resource
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    url.stopAccessingSecurityScopedResource()
+                }
             }
         } catch {
             logError("Document selection failed: \(error)")
@@ -184,6 +225,7 @@ struct ChatView: View {
         // Update local state
         conversation = updatedConversation
         userInput = ""
+        textHeight = 40 // Reset text height to minimum
         
         // Get the appropriate LLM service
         let service = appState.getServiceForType(conversation.modelType)
@@ -213,8 +255,11 @@ struct ChatView: View {
                 self.attachedDocuments = []
                 
             }, receiveValue: { response in
-                // Create assistant message
-                let assistantMessage = Message.assistantMessage(content: response)
+                // Create assistant message with current model type
+                let assistantMessage = Message.assistantMessage(
+                    content: response,
+                    modelType: self.conversation.modelType
+                )
                 
                 var responseConversation = self.conversation
                 responseConversation.addMessage(assistantMessage)
@@ -226,5 +271,73 @@ struct ChatView: View {
                 self.conversation = responseConversation
             })
             .store(in: &cancellables)
+    }
+}
+
+// Auto-sizing text editor component
+struct AutoSizingTextEditor: NSViewRepresentable {
+    @Binding var text: String
+    var onHeightChange: (CGFloat) -> Void
+    
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSTextView.scrollableTextView()
+        let textView = scrollView.documentView as! NSTextView
+        
+        textView.delegate = context.coordinator
+        textView.isEditable = true
+        textView.isSelectable = true
+        textView.allowsUndo = true
+        textView.font = NSFont.systemFont(ofSize: NSFont.systemFontSize)
+        textView.textContainerInset = NSSize(width: 5, height: 5)
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticLinkDetectionEnabled = true
+        
+        // Disable scrolling - we want to expand instead
+        scrollView.hasVerticalScroller = false
+        
+        return scrollView
+    }
+    
+    func updateNSView(_ nsView: NSScrollView, context: Context) {
+        let textView = nsView.documentView as! NSTextView
+        
+        // Only update if text changed externally (not from user typing)
+        if textView.string != text {
+            textView.string = text
+        }
+        
+        // Calculate height based on text content
+        calculateHeight(textView)
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    private func calculateHeight(_ textView: NSTextView) {
+        // Get the text height
+        let layoutManager = textView.layoutManager!
+        layoutManager.ensureLayout(for: textView.textContainer!)
+        
+        let height = layoutManager.usedRect(for: textView.textContainer!).height + textView.textContainerInset.height * 2
+        onHeightChange(height)
+    }
+    
+    class Coordinator: NSObject, NSTextViewDelegate {
+        var parent: AutoSizingTextEditor
+        
+        init(_ parent: AutoSizingTextEditor) {
+            self.parent = parent
+        }
+        
+        func textDidChange(_ notification: Notification) {
+            guard let textView = notification.object as? NSTextView else { return }
+            
+            // Update binding
+            parent.text = textView.string
+            
+            // Recalculate height
+            parent.calculateHeight(textView)
+        }
     }
 }
