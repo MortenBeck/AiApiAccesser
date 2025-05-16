@@ -173,6 +173,22 @@ class AppState: ObservableObject {
         saveUsageData()
     }
     
+    func saveSettings() {
+        let openAISettings = llmSettings[.chatGPT] ?? LLMSettings.defaultSettings(for: .chatGPT)
+        let claudeSettings = llmSettings[.claude] ?? LLMSettings.defaultSettings(for: .claude)
+        let deepSeekSettings = llmSettings[.deepSeek] ?? LLMSettings.defaultSettings(for: .deepSeek)
+        
+        persistenceService.saveSettings(openAI: openAISettings, claude: claudeSettings, deepSeek: deepSeekSettings)
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    logError("Failed to save settings: \(error)")
+                }
+            }, receiveValue: { _ in
+                logInfo("Settings saved successfully")
+            })
+            .store(in: &cancellables)
+    }
+    
     func resetRequestCounts() {
         requestCounts = [:]
         saveUsageData()

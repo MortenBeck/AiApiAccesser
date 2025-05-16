@@ -71,8 +71,8 @@ class KeychainManager {
               let key = String(data: data, encoding: .utf8) else {
             return nil
         }
-        
-        return key
+        print("Retrieved API key for \(type): \(key.prefix(8))...")
+            return key
     }
     
     func deleteApiKey(for type: LLMType) throws {

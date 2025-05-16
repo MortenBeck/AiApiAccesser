@@ -334,7 +334,9 @@ struct SettingsView: View {
         }
         
         // Save to persistence
-        $appState.saveSettings
+        appState.saveSettings()
+
+        
         
         // For future implementation: save default model to AppState
         // appState.defaultModel = defaultModel

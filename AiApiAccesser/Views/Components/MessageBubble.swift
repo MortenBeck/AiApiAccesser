@@ -1,5 +1,4 @@
 import SwiftUI
-import Combine
 
 struct MessageBubble: View {
     let message: Message
@@ -33,7 +32,7 @@ struct MessageBubble: View {
                 .padding(.bottom, 4)
             }
             
-            Text(message.content.highlightedMarkdown())
+            markdownText(message.content)
                 .padding(12)
                 .background(Color.blue.opacity(0.7))
                 .cornerRadius(16, corners: [.topLeft, .topRight, .bottomLeft])
@@ -52,7 +51,8 @@ struct MessageBubble: View {
                     .padding(.trailing, 8)
                 
                 // Message content
-                Text(message.content.highlightedMarkdown())
+                markdownText(message.content)
+                    .textSelection(.enabled)
                     .padding(12)
                     .background(Color(NSColor.windowBackgroundColor).opacity(0.6))
                     .cornerRadius(16, corners: [.topRight, .bottomRight, .bottomLeft])
@@ -63,9 +63,13 @@ struct MessageBubble: View {
         }
     }
     
+    private func markdownText(_ content: String) -> some View {
+        let attributedString = try? AttributedString(markdown: content)
+        return Text(attributedString ?? AttributedString(content))
+    }
+    
     private var modelIcon: some View {
         // This should ideally come from the conversation's model type
-        // For now we'll just use a default icon
         Image(systemName: "brain")
             .foregroundColor(.purple)
     }
