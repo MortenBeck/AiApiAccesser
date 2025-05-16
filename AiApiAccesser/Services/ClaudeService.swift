@@ -68,7 +68,7 @@ class ClaudeService: LLMService {
        let url = URL(string: "https://api.anthropic.com/v1/messages")!
        var request = URLRequest(url: url)
        request.httpMethod = "POST"
-       request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+       request.addValue(apiKey, forHTTPHeaderField: "x-api-key")
        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
        request.addValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
        
@@ -154,30 +154,34 @@ class ClaudeService: LLMService {
            .eraseToAnyPublisher()
    }
    
-   func validateApiKey(_ apiKey: String) -> AnyPublisher<Bool, Error> {
-       let url = URL(string: "https://api.anthropic.com/v1/models")!
-       var request = URLRequest(url: url)
-       request.httpMethod = "GET"
-       request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-       request.addValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
-       
-       return URLSession.shared.dataTaskPublisher(for: request)
-           .tryMap { data, response -> Bool in
-               guard let httpResponse = response as? HTTPURLResponse else {
-                   return false
-               }
-               
-               let responseString = String(data: data, encoding: .utf8) ?? "Unable to decode"
-               print("Validation response (\(httpResponse.statusCode)): \(responseString)")
-               
-               return httpResponse.statusCode == 200
-           }
-           .mapError { error -> Error in
-               print("Validation error: \(error)")
-               return error
-           }
-           .eraseToAnyPublisher()
-   }
+    func validateApiKey(_ apiKey: String) -> AnyPublisher<Bool, Error> {
+        let url = URL(string: "https://api.anthropic.com/v1/messages")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        
+        let payload: [String: Any] = [
+            "model": "claude-3-7-sonnet-20250219",
+            "messages": [["role": "user", "content": "Hello"]],
+            "max_tokens": 10
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+        
+        return URLSession.shared.dataTaskPublisher(for: request)
+            .tryMap { data, response -> Bool in
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    return false
+                }
+                return httpResponse.statusCode == 200
+            }
+            .mapError { error -> Error in
+                return error
+            }
+            .eraseToAnyPublisher()
+    }
 }
 
 // Response type for decoding
