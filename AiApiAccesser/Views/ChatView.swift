@@ -167,9 +167,11 @@ struct ChatView: View {
             for url in urls {
                 // Ensure we have security-scoped access to the file
                 guard url.startAccessingSecurityScopedResource() else {
-                    logError("Failed to access security-scoped resource: \(url.absoluteString)")
-                    errorMessage = "Failed to access file: \(url.lastPathComponent). Permission denied."
-                    showError = true
+                    // Using DispatchQueue.main.async to modify state
+                    DispatchQueue.main.async {
+                        self.errorMessage = "Failed to access file: \(url.lastPathComponent). Permission denied."
+                        self.showError = true
+                    }
                     continue
                 }
                 
@@ -181,9 +183,11 @@ struct ChatView: View {
                 }
             }
         } catch {
-            logError("Document selection failed: \(error)")
-            errorMessage = "Failed to select document: \(error.localizedDescription)"
-            showError = true
+            // Using DispatchQueue.main.async to modify state
+            DispatchQueue.main.async {
+                self.errorMessage = "Failed to select document: \(error.localizedDescription)"
+                self.showError = true
+            }
         }
     }
     

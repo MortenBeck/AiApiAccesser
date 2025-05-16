@@ -1,129 +1,164 @@
 import SwiftUI
+import AppKit
 
 struct TabBar: View {
     @EnvironmentObject var appState: AppState
     @Binding var activeConversationId: UUID?
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 4) {
-                // Existing conversation tabs
-                ForEach(appState.conversations) { conversation in
-                    ConversationTab(
-                        conversation: conversation,
-                        isActive: activeConversationId == conversation.id,
-                        onSelect: {
-                            activeConversationId = conversation.id
-                        },
-                        onClose: {
-                            handleCloseTab(id: conversation.id)
-                        }
-                    )
-                }
-                
-                // New tab button - simple and direct
-                Button(action: {
-                    print("Creating new conversation")
+        NativeTabBarWrapper(
+            conversations: appState.conversations,
+            activeConversationId: $activeConversationId,
+            createNewConversation: {
+                DispatchQueue.main.async {
                     let id = appState.createNewConversation()
-                    print("New conversation ID: \(id)")
                     activeConversationId = id
-                    print("Active ID updated to: \(String(describing: activeConversationId))")
-                }) {
-                    HStack {
-                        Image(systemName: "plus")
-                        Text("New")
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color(NSColor.windowBackgroundColor).opacity(0.3))
-                    .cornerRadius(6)
                 }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal, 4)
+            },
+            deleteConversation: { id in
+                handleTabClose(id: id)
             }
-            .padding(.vertical, 4)
-        }
+        )
         .frame(height: 40)
-        .background(Color(NSColor.windowBackgroundColor).opacity(0.8))
     }
     
-    private func handleCloseTab(id: UUID) {
-        print("Closing tab with ID: \(id)")
-        
-        // Find the index of the conversation to be closed
+    private func handleTabClose(id: UUID) {
         if let index = appState.conversations.firstIndex(where: { $0.id == id }) {
-            // Determine the next tab to be active
             if id == activeConversationId {
-                if index < appState.conversations.count - 1 {
-                    // If not the last tab, select the next one
-                    activeConversationId = appState.conversations[index + 1].id
-                    print("Setting active to next: \(String(describing: activeConversationId))")
-                } else if index > 0 {
-                    // If the last tab, select the previous one
-                    activeConversationId = appState.conversations[index - 1].id
-                    print("Setting active to previous: \(String(describing: activeConversationId))")
-                } else {
-                    // If it's the only tab, set to nil
-                    activeConversationId = nil
-                    print("Setting active to nil")
+                DispatchQueue.main.async {
+                    if index < appState.conversations.count - 1 {
+                        self.activeConversationId = appState.conversations[index + 1].id
+                    } else if index > 0 {
+                        self.activeConversationId = appState.conversations[index - 1].id
+                    } else {
+                        self.activeConversationId = nil
+                    }
                 }
             }
         }
         
-        // Delete the conversation
-        print("Deleting conversation")
-        appState.deleteConversation(id: id)
+        DispatchQueue.main.async {
+            self.appState.deleteConversation(id: id)
+        }
     }
 }
 
-struct ConversationTab: View {
-    let conversation: Conversation
-    let isActive: Bool
-    let onSelect: () -> Void
-    let onClose: () -> Void
+struct NativeTabBarWrapper: NSViewRepresentable {
+    var conversations: [Conversation]
+    @Binding var activeConversationId: UUID?
+    var createNewConversation: () -> Void
+    var deleteConversation: (UUID) -> Void
     
-    var body: some View {
-        HStack(spacing: 6) {
-            // Model icon
-            modelIcon
-                .font(.system(size: 14))
-            
-            // Title
-            Text(conversation.title)
-                .lineLimit(1)
-                .truncationMode(.tail)
-            
-            // Always show close button for simplicity
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 10))
-                    .foregroundColor(.red)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.leading, 4)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .fill(isActive ? Color.blue.opacity(0.3) : Color(NSColor.windowBackgroundColor).opacity(0.3))
-        )
-        .onTapGesture {
-            onSelect()
-        }
+    func makeNSView(context: Context) -> NSStackView {
+        let stackView = NSStackView()
+        stackView.orientation = .horizontal
+        stackView.spacing = 4
+        stackView.edgeInsets = NSEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        stackView.wantsLayer = true
+        stackView.layer?.backgroundColor = NSColor.windowBackgroundColor.withAlphaComponent(0.8).cgColor
+        
+        updateNSView(stackView, context: context)
+        return stackView
     }
     
-    private var modelIcon: some View {
-        switch conversation.modelType {
+    func updateNSView(_ stackView: NSStackView, context: Context) {
+        // Clear existing views
+        stackView.views.forEach { $0.removeFromSuperview() }
+        
+        // Add tab for each conversation
+        for conversation in conversations {
+            let tabButton = NSButton()
+            tabButton.title = " " + conversation.title  // Add space after icon
+            tabButton.bezelStyle = .recessed
+            tabButton.isBordered = true
+            tabButton.setButtonType(.momentaryPushIn)
+            tabButton.tag = conversations.firstIndex(where: { $0.id == conversation.id }) ?? 0
+            
+            // Set model icon
+            let icon = getModelIcon(for: conversation.modelType)
+            if let icon = icon {
+                let scaledIcon = NSImage(size: NSSize(width: 14, height: 14))
+                scaledIcon.lockFocus()
+                NSGraphicsContext.current?.imageInterpolation = .high
+                icon.draw(in: NSRect(x: 0, y: 0, width: 14, height: 14))
+                scaledIcon.unlockFocus()
+                
+                tabButton.image = scaledIcon
+                tabButton.imagePosition = .imageLeft
+            }
+            
+            if conversation.id == activeConversationId {
+                tabButton.contentTintColor = NSColor.blue
+            }
+            
+            tabButton.target = context.coordinator
+            tabButton.action = #selector(Coordinator.tabSelected(_:))
+            tabButton.identifier = NSUserInterfaceItemIdentifier(conversation.id.uuidString)
+            
+            stackView.addArrangedSubview(tabButton)
+            
+            // Add close button for tab
+            let closeButton = NSButton(title: "✕", target: context.coordinator, action: #selector(Coordinator.closeTab(_:)))
+            closeButton.tag = tabButton.tag
+            closeButton.bezelStyle = .inline
+            closeButton.isBordered = false
+            closeButton.contentTintColor = NSColor.red
+            closeButton.identifier = NSUserInterfaceItemIdentifier(conversation.id.uuidString)
+            
+            stackView.addArrangedSubview(closeButton)
+        }
+        
+        // Add new tab button
+        let newTabButton = NSButton(title: "+ New", target: context.coordinator, action: #selector(Coordinator.newTab))
+        newTabButton.bezelStyle = .recessed
+        newTabButton.isBordered = true
+        
+        stackView.addArrangedSubview(newTabButton)
+    }
+    
+    private func getModelIcon(for modelType: LLMType) -> NSImage? {
+        let svgString: String
+        
+        switch modelType {
         case .chatGPT:
-            return AnyView(SVGIcons.openAILogo()
-                .frame(width: 14, height: 14))
+            svgString = SVGIcons.openAISVG
         case .claude:
-            return AnyView(SVGIcons.claudeLogo()
-                .frame(width: 14, height: 14))
+            svgString = SVGIcons.claudeSVG
         case .deepSeek:
-            return AnyView(SVGIcons.deepSeekLogo()
-                .frame(width: 14, height: 14))
+            svgString = SVGIcons.deepSeekSVG
+        }
+        
+        let data = svgString.data(using: .utf8)!
+        return NSImage(data: data)
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject {
+        var parent: NativeTabBarWrapper
+        
+        init(_ parent: NativeTabBarWrapper) {
+            self.parent = parent
+        }
+        
+        @objc func tabSelected(_ sender: NSButton) {
+            guard let idString = sender.identifier?.rawValue,
+                  let id = UUID(uuidString: idString) else { return }
+            
+            self.parent.activeConversationId = id
+        }
+        
+        @objc func closeTab(_ sender: NSButton) {
+            guard let idString = sender.identifier?.rawValue,
+                  let id = UUID(uuidString: idString) else { return }
+            
+            self.parent.deleteConversation(id)
+        }
+        
+        @objc func newTab() {
+            self.parent.createNewConversation()
         }
     }
 }

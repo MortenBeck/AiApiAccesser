@@ -5,16 +5,19 @@ struct MainView: View {
     @State private var activeConversationId: UUID?
     
     var body: some View {
-        VStack(spacing: 0)
+        VStack(spacing: 0) {
             // Tab bar
             TabBar(activeConversationId: $activeConversationId)
                 .environmentObject(appState)
+                .allowsHitTesting(true)
+                .contentShape(Rectangle())
             
             // Main content area
             if let conversationId = activeConversationId,
                let conversation = appState.conversations.first(where: { $0.id == conversationId }) {
                 ChatView(conversation: conversation)
                     .id(conversationId) // Force new view when changing conversations
+                    .allowsHitTesting(true)
             } else {
                 welcomeView
             }
@@ -36,21 +39,27 @@ struct MainView: View {
             ToolbarItem(placement: .automatic) {
                 HStack(spacing: 16) {
                     Button(action: {
-                        appState.showAPIManagement = true
+                        DispatchQueue.main.async {
+                            appState.showAPIManagement = true
+                        }
                     }) {
                         Image(systemName: "key.fill")
                             .help("API Management")
                     }
                     
                     Button(action: {
-                        appState.showUsageMonitor = true
+                        DispatchQueue.main.async {
+                            appState.showUsageMonitor = true
+                        }
                     }) {
                         Image(systemName: "chart.bar.fill")
                             .help("Usage Monitor")
                     }
                     
                     Button(action: {
-                        appState.showSettings = true
+                        DispatchQueue.main.async {
+                            appState.showSettings = true
+                        }
                     }) {
                         Image(systemName: "gear")
                             .help("Settings")
@@ -62,9 +71,11 @@ struct MainView: View {
             print("MainView appeared")
             
             // Initialize activeConversationId with the first conversation if available
-            if activeConversationId == nil && !appState.conversations.isEmpty {
-                activeConversationId = appState.conversations[0].id
-                print("Setting initial active ID to: \(String(describing: activeConversationId))")
+            DispatchQueue.main.async {
+                if self.activeConversationId == nil && !self.appState.conversations.isEmpty {
+                    self.activeConversationId = self.appState.conversations[0].id
+                    print("Setting initial active ID to: \(String(describing: self.activeConversationId))")
+                }
             }
         }
     }
@@ -81,10 +92,12 @@ struct MainView: View {
                 ForEach(LLMType.allCases) { model in
                     Button(action: {
                         print("Creating new conversation with model: \(model)")
-                        let id = appState.createNewConversation(modelType: model)
-                        print("New conversation ID: \(id)")
-                        activeConversationId = id
-                        print("Active ID updated to: \(String(describing: activeConversationId))")
+                        DispatchQueue.main.async {
+                            let id = self.appState.createNewConversation(modelType: model)
+                            print("New conversation ID: \(id)")
+                            self.activeConversationId = id
+                            print("Active ID updated to: \(String(describing: self.activeConversationId))")
+                        }
                     }) {
                         VStack {
                             modelIcon(for: model)
@@ -99,6 +112,7 @@ struct MainView: View {
                         .cornerRadius(12)
                     }
                     .buttonStyle(PlainButtonStyle())
+                    .contentShape(Rectangle())
                 }
             }
             .padding(.top)
@@ -131,3 +145,4 @@ struct MainView: View {
             return .blue
         }
     }
+}
