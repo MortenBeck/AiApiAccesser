@@ -1,4 +1,5 @@
 import SwiftUI
+import SVGIcons
 
 struct MainView: View {
     @EnvironmentObject var appState: AppState
@@ -117,11 +118,14 @@ struct MainView: View {
     private func modelIcon(for model: LLMType) -> some View {
         switch model {
         case .chatGPT:
-            return Image(systemName: "bubble.left.and.text.bubble.right")
+            return SVGIcons.openAILogo()
+                .frame(width: 30, height: 30)
         case .claude:
-            return Image(systemName: "brain")
+            return SVGIcons.claudeLogo()
+                .frame(width: 30, height: 30)
         case .deepSeek:
-            return Image(systemName: "magnifyingglass")
+            return SVGIcons.deepSeekLogo()
+                .frame(width: 30, height: 30)
         }
     }
     

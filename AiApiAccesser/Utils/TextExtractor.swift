@@ -50,7 +50,54 @@ class TextExtractor {
         }.eraseToAnyPublisher()
     }
     
+    func extractTextFromJupyterNotebook(url: URL) -> AnyPublisher<String, Error> {
+        return Future<String, Error> { promise in
+            logInfo("Attempting to extract text from Jupyter notebook: \(url.lastPathComponent)")
+            
+            do {
+                let data = try Data(contentsOf: url)
+                
+                // Parse JSON data
+                guard let notebook = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                      let cells = notebook["cells"] as? [[String: Any]] else {
+                    throw NSError(domain: "TextExtractor", code: 2,
+                                 userInfo: [NSLocalizedDescriptionKey: "Failed to parse Jupyter notebook structure"])
+                }
+                
+                var extractedText = ""
+                
+                // Process each cell
+                for cell in cells {
+                    if let cellType = cell["cell_type"] as? String {
+                        // Extract code cells
+                        if cellType == "code", let source = cell["source"] as? [String] {
+                            extractedText += "```python\n"
+                            extractedText += source.joined(separator: "")
+                            extractedText += "\n```\n\n"
+                        }
+                        // Extract markdown cells
+                        else if cellType == "markdown", let source = cell["source"] as? [String] {
+                            extractedText += source.joined(separator: "")
+                            extractedText += "\n\n"
+                        }
+                    }
+                }
+                
+                logInfo("Successfully extracted \(extractedText.count) characters from Jupyter notebook")
+                promise(.success(extractedText))
+            } catch {
+                logError("Failed to process Jupyter notebook: \(error)")
+                promise(.failure(error))
+            }
+        }.eraseToAnyPublisher()
+    }
+    
     func extractTextFromFile(url: URL) -> AnyPublisher<String, Error> {
+        // Check if this is a Jupyter notebook
+        if url.pathExtension.lowercased() == "ipynb" {
+            return extractTextFromJupyterNotebook(url: url)
+        }
+        
         return Future<String, Error> { promise in
             logInfo("Attempting to extract text from file: \(url.lastPathComponent)")
             

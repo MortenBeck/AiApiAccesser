@@ -1,4 +1,5 @@
 import SwiftUI
+import SVGIcons
 
 struct MessageBubble: View {
     let message: Message
@@ -80,14 +81,14 @@ struct MessageBubble: View {
     private func modelIcon(for modelType: LLMType) -> some View {
         switch modelType {
         case .chatGPT:
-            return Image(systemName: "bubble.left.and.text.bubble.right")
-                .foregroundColor(.green)
+            return SVGIcons.openAILogo()
+                .frame(width: 30, height: 30)
         case .claude:
-            return Image(systemName: "brain")
-                .foregroundColor(.purple)
+            return SVGIcons.claudeLogo()
+                .frame(width: 30, height: 30)
         case .deepSeek:
-            return Image(systemName: "magnifyingglass")
-                .foregroundColor(.blue)
+            return SVGIcons.deepSeekLogo()
+                .frame(width: 30, height: 30)
         }
     }
 }

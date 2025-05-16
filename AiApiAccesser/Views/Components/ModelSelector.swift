@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import SVGIcons
 
 struct ModelSelector: View {
     @Binding var selectedModel: LLMType
@@ -23,11 +24,14 @@ struct ModelSelector: View {
     private func modelIcon(for model: LLMType) -> some View {
         switch model {
         case .chatGPT:
-            return Image(systemName: "bubble.left.and.text.bubble.right")
+            return SVGIcons.openAILogo()
+                .frame(width: 20, height: 20)
         case .claude:
-            return Image(systemName: "brain")
+            return SVGIcons.claudeLogo()
+                .frame(width: 20, height: 20)
         case .deepSeek:
-            return Image(systemName: "magnifyingglass")
+            return SVGIcons.deepSeekLogo()
+                .frame(width: 20, height: 20)
         }
     }
     
