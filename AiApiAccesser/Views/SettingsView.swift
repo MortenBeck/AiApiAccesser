@@ -49,7 +49,10 @@ struct SettingsView: View {
             }
             .padding()
         }
-        .frame(width: 700, height: 500)
+        // Remove fixed frame size and allow content to determine size
+        .frame(minWidth: 700, minHeight: 500)
+        // Add a maximum size to prevent excessive growth
+        .frame(maxWidth: 900, maxHeight: 800)
         .onAppear {
             // Deep copy settings from app state
             for type in LLMType.allCases {
@@ -62,32 +65,35 @@ struct SettingsView: View {
     }
     
     private var generalSettingsView: some View {
-        Form {
-            Section(header: Text("Application Settings")) {
-                Toggle("Auto-save conversations", isOn: .constant(true))
-                    .disabled(true) // Always enabled for now
-                
-                HStack {
-                    Text("Default LLM")
-                    Spacer()
-                    ModelSelector(selectedModel: $defaultModel)
+        ScrollView {
+            Form {
+                Section(header: Text("Application Settings")) {
+                    Toggle("Auto-save conversations", isOn: .constant(true))
+                        .disabled(true) // Always enabled for now
+                    
+                    HStack {
+                        Text("Default LLM")
+                        Spacer()
+                        ModelSelector(selectedModel: $defaultModel)
+                    }
+                    
+                    HStack {
+                        Text("UI Theme")
+                        Spacer()
+                        Text("Dark Mode")
+                            .foregroundColor(.gray)
+                    }
                 }
                 
-                HStack {
-                    Text("UI Theme")
-                    Spacer()
-                    Text("Dark Mode")
-                        .foregroundColor(.gray)
+                Section(header: Text("Performance")) {
+                    Toggle("Cache responses locally", isOn: .constant(true))
+                        .disabled(true)
+                    
+                    Toggle("Enable document processing in background", isOn: .constant(true))
+                        .disabled(true)
                 }
             }
-            
-            Section(header: Text("Performance")) {
-                Toggle("Cache responses locally", isOn: .constant(true))
-                    .disabled(true)
-                
-                Toggle("Enable document processing in background", isOn: .constant(true))
-                    .disabled(true)
-            }
+            .padding(.bottom, 20)
         }
     }
     
@@ -97,140 +103,143 @@ struct SettingsView: View {
             set: { self.settings[model] = $0 }
         )
         
-        return Form {
-            Section(header: Text("Model Selection")) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Picker("Model", selection: Binding(
-                        get: { settings.wrappedValue.modelName },
-                        set: { settings.wrappedValue.modelName = $0 }
-                    )) {
-                        ForEach(modelOptions(for: model), id: \.modelId) { option in
-                            Text(option.displayName).tag(option.modelId)
+        return ScrollView {
+            Form {
+                Section(header: Text("Model Selection")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Picker("Model", selection: Binding(
+                            get: { settings.wrappedValue.modelName },
+                            set: { settings.wrappedValue.modelName = $0 }
+                        )) {
+                            ForEach(modelOptions(for: model), id: \.modelId) { option in
+                                Text(option.displayName).tag(option.modelId)
+                            }
+                        }
+                        
+                        if let selectedModelInfo = getModelInfo(model: model, modelId: settings.wrappedValue.modelName) {
+                            Text(selectedModelInfo.description)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Text("Max Context Size: \(selectedModelInfo.maxContext) tokens")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
                         }
                     }
-                    
-                    if let selectedModelInfo = getModelInfo(model: model, modelId: settings.wrappedValue.modelName) {
-                        Text(selectedModelInfo.description)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text("Max Context Size: \(selectedModelInfo.maxContext) tokens")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            
-            Section(header: Text("Response Settings")) {
-                VStack(alignment: .leading) {
-                    Text("Temperature: \(settings.wrappedValue.temperature, specifier: "%.2f")")
-                    Slider(value: Binding(
-                        get: { settings.wrappedValue.temperature },
-                        set: { settings.wrappedValue.temperature = $0 }
-                    ), in: 0...1, step: 0.05)
-                    
-                    Text("Lower values produce more deterministic outputs, higher values more creative")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
                 
-                VStack(alignment: .leading) {
-                    Text("Max Tokens: \(settings.wrappedValue.maxTokens)")
-                    Slider(value: Binding(
-                        get: { Double(settings.wrappedValue.maxTokens) },
-                        set: { settings.wrappedValue.maxTokens = Int($0) }
-                    ), in: 100...8000, step: 100)
-                    
-                    Text("Maximum length of generated responses")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            Section(header: Text("System Prompt")) {
-                TextEditor(text: Binding(
-                    get: { settings.wrappedValue.extraSystemPrompt },
-                    set: { settings.wrappedValue.extraSystemPrompt = $0 }
-                ))
-                .frame(height: 100)
-                .font(.system(.body, design: .monospaced))
-                
-                Text("Additional instructions provided to the model for all conversations")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            Section(header: Text("Document Processing")) {
-                VStack(alignment: .leading) {
-                    Text("Chunk Size: \(settings.wrappedValue.documentChunkSize)")
-                    Slider(value: Binding(
-                        get: { Double(settings.wrappedValue.documentChunkSize) },
-                        set: { settings.wrappedValue.documentChunkSize = Int($0) }
-                    ), in: 500...8000, step: 500)
-                    
-                    Text("Size of text chunks when processing large documents")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                VStack(alignment: .leading) {
-                    Text("Chunk Overlap: \(settings.wrappedValue.documentOverlap)")
-                    Slider(value: Binding(
-                        get: { Double(settings.wrappedValue.documentOverlap) },
-                        set: { settings.wrappedValue.documentOverlap = Int($0) }
-                    ), in: 0...500, step: 10)
-                    
-                    Text("Overlap between adjacent chunks to maintain context")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            Section(header: Text("Usage Limitations")) {
-                Toggle("Enable Rate Limiting", isOn: Binding(
-                    get: { settings.wrappedValue.enableRateLimit },
-                    set: { settings.wrappedValue.enableRateLimit = $0 }
-                ))
-                
-                if settings.wrappedValue.enableRateLimit {
-                    Stepper(
-                        "Max Requests per Minute: \(settings.wrappedValue.maxRequestsPerMinute)",
-                        value: Binding(
-                            get: { Double(settings.wrappedValue.maxRequestsPerMinute) },
-                            set: { settings.wrappedValue.maxRequestsPerMinute = Int($0) }
-                        ),
-                        in: 1...20
-                    )
-                    
-                    Text("Limits the rate of API calls to avoid rate limit errors")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Toggle("Enable Token Budget", isOn: Binding(
-                    get: { settings.wrappedValue.enableTokenBudget },
-                    set: { settings.wrappedValue.enableTokenBudget = $0 }
-                ))
-                
-                if settings.wrappedValue.enableTokenBudget {
+                Section(header: Text("Response Settings")) {
                     VStack(alignment: .leading) {
-                        Text("Daily Token Budget: \(settings.wrappedValue.dailyTokenBudget)")
+                        Text("Temperature: \(settings.wrappedValue.temperature, specifier: "%.2f")")
                         Slider(value: Binding(
-                            get: { Double(settings.wrappedValue.dailyTokenBudget) },
-                            set: { settings.wrappedValue.dailyTokenBudget = Int($0) }
-                        ), in: 10000...1000000, step: 10000)
+                            get: { settings.wrappedValue.temperature },
+                            set: { settings.wrappedValue.temperature = $0 }
+                        ), in: 0...1, step: 0.05)
                         
-                        Text("Maximum tokens to use per day to control costs")
+                        Text("Lower values produce more deterministic outputs, higher values more creative")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("Max Tokens: \(settings.wrappedValue.maxTokens)")
+                        Slider(value: Binding(
+                            get: { Double(settings.wrappedValue.maxTokens) },
+                            set: { settings.wrappedValue.maxTokens = Int($0) }
+                        ), in: 100...8000, step: 100)
+                        
+                        Text("Maximum length of generated responses")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
+                
+                Section(header: Text("System Prompt")) {
+                    TextEditor(text: Binding(
+                        get: { settings.wrappedValue.extraSystemPrompt },
+                        set: { settings.wrappedValue.extraSystemPrompt = $0 }
+                    ))
+                    .frame(height: 100)
+                    .font(.system(.body, design: .monospaced))
+                    
+                    Text("Additional instructions provided to the model for all conversations")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                
+                Section(header: Text("Document Processing")) {
+                    VStack(alignment: .leading) {
+                        Text("Chunk Size: \(settings.wrappedValue.documentChunkSize)")
+                        Slider(value: Binding(
+                            get: { Double(settings.wrappedValue.documentChunkSize) },
+                            set: { settings.wrappedValue.documentChunkSize = Int($0) }
+                        ), in: 500...8000, step: 500)
+                        
+                        Text("Size of text chunks when processing large documents")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text("Chunk Overlap: \(settings.wrappedValue.documentOverlap)")
+                        Slider(value: Binding(
+                            get: { Double(settings.wrappedValue.documentOverlap) },
+                            set: { settings.wrappedValue.documentOverlap = Int($0) }
+                        ), in: 0...500, step: 10)
+                        
+                        Text("Overlap between adjacent chunks to maintain context")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Section(header: Text("Usage Limitations")) {
+                    Toggle("Enable Rate Limiting", isOn: Binding(
+                        get: { settings.wrappedValue.enableRateLimit },
+                        set: { settings.wrappedValue.enableRateLimit = $0 }
+                    ))
+                    
+                    if settings.wrappedValue.enableRateLimit {
+                        Stepper(
+                            "Max Requests per Minute: \(settings.wrappedValue.maxRequestsPerMinute)",
+                            value: Binding(
+                                get: { Double(settings.wrappedValue.maxRequestsPerMinute) },
+                                set: { settings.wrappedValue.maxRequestsPerMinute = Int($0) }
+                            ),
+                            in: 1...20
+                        )
+                        
+                        Text("Limits the rate of API calls to avoid rate limit errors")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Toggle("Enable Token Budget", isOn: Binding(
+                        get: { settings.wrappedValue.enableTokenBudget },
+                        set: { settings.wrappedValue.enableTokenBudget = $0 }
+                    ))
+                    
+                    if settings.wrappedValue.enableTokenBudget {
+                        VStack(alignment: .leading) {
+                            Text("Daily Token Budget: \(settings.wrappedValue.dailyTokenBudget)")
+                            Slider(value: Binding(
+                                get: { Double(settings.wrappedValue.dailyTokenBudget) },
+                                set: { settings.wrappedValue.dailyTokenBudget = Int($0) }
+                            ), in: 10000...1000000, step: 10000)
+                            
+                            Text("Maximum tokens to use per day to control costs")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+                
+                Button("Reset to Default") {
+                    self.settings[model] = LLMSettings.defaultSettings(for: model)
+                }
+                .padding(.top)
             }
-            
-            Button("Reset to Default") {
-                self.settings[model] = LLMSettings.defaultSettings(for: model)
-            }
-            .padding(.top)
+            .padding(.bottom, 20)
         }
     }
     
