@@ -116,14 +116,14 @@ struct ConversationTab: View {
     private var modelIcon: some View {
         switch conversation.modelType {
         case .chatGPT:
-            return Image(systemName: "bubble.left.and.text.bubble.right")
-                .foregroundColor(.green)
+            return AnyView(SVGIcons.openAILogo()
+                .frame(width: 14, height: 14))
         case .claude:
-            return Image(systemName: "brain")
-                .foregroundColor(.purple)
+            return AnyView(SVGIcons.claudeLogo()
+                .frame(width: 14, height: 14))
         case .deepSeek:
-            return Image(systemName: "magnifyingglass")
-                .foregroundColor(.blue)
+            return AnyView(SVGIcons.deepSeekLogo()
+                .frame(width: 14, height: 14))
         }
     }
 }

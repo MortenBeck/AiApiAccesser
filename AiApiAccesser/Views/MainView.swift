@@ -1,19 +1,11 @@
 import SwiftUI
-import SVGIcons
 
 struct MainView: View {
     @EnvironmentObject var appState: AppState
     @State private var activeConversationId: UUID?
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Debug info to show state
-            Text("Active ID: \(activeConversationId?.uuidString ?? "nil") | Count: \(appState.conversations.count)")
-                .font(.caption)
-                .padding(4)
-                .background(Color.black)
-                .foregroundColor(.white)
-            
+        VStack(spacing: 0)
             // Tab bar
             TabBar(activeConversationId: $activeConversationId)
                 .environmentObject(appState)
@@ -115,17 +107,17 @@ struct MainView: View {
         .background(Color(NSColor.windowBackgroundColor))
     }
     
-    private func modelIcon(for model: LLMType) -> some View {
-        switch model {
+    private func modelIcon(for modelType: LLMType) -> some View {
+        switch modelType {
         case .chatGPT:
-            return SVGIcons.openAILogo()
-                .frame(width: 30, height: 30)
+            return AnyView(SVGIcons.openAILogo()
+                .frame(width: 30, height: 30))
         case .claude:
-            return SVGIcons.claudeLogo()
-                .frame(width: 30, height: 30)
+            return AnyView(SVGIcons.claudeLogo()
+                .frame(width: 30, height: 30))
         case .deepSeek:
-            return SVGIcons.deepSeekLogo()
-                .frame(width: 30, height: 30)
+            return AnyView(SVGIcons.deepSeekLogo()
+                .frame(width: 30, height: 30))
         }
     }
     
@@ -139,4 +131,3 @@ struct MainView: View {
             return .blue
         }
     }
-}
